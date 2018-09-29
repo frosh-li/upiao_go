@@ -18,9 +18,9 @@ func dialToServer(snKey string, groups int, batterys int) {
 	defer conn.Close()
 	fmt.Println("dialToServer", snKey)
 	// aChan := make(chan int, 1)
-	stationDataTicker := time.NewTicker(time.Hour * 2) // 两个小时发送一次站数据
-	heatbeatTicker := time.NewTimer(time.Second * 10)  // 十秒发送一个心跳包
-	errorTicker := time.NewTimer(time.Second * 10)     // 十秒随机测试是否需要发送错误数据包
+	stationDataTicker := time.NewTimer(time.Hour * 2) // 两个小时发送一次站数据
+	heatbeatTicker := time.NewTimer(time.Second * 10) // 十秒发送一个心跳包
+	errorTicker := time.NewTimer(time.Second * 10)    // 十秒随机测试是否需要发送错误数据包
 
 	msg := []byte(mock.GetStation(snKey, 2, 3))
 	conn.Write(msg)
@@ -32,6 +32,7 @@ func dialToServer(snKey string, groups int, batterys int) {
 				msg := []byte(mock.GetStation(snKey, groups, batterys))
 				conn.Write(msg)
 				fmt.Printf("send station data %v %v\n", snKey, time.Now())
+				stationDataTicker.Reset(time.Hour * 2)
 			case <-heatbeatTicker.C:
 				msg := []byte("<{\"sn_key\":\"" + snKey + "\", \"sid\":123}>")
 				conn.Write(msg)
@@ -78,7 +79,7 @@ func dialToServer(snKey string, groups int, batterys int) {
 
 func main() {
 	ch := make(chan string)
-	for i := 100000000; i <= 100001000; i++ {
+	for i := 100000000; i <= 100000050; i++ {
 		go dialToServer(strconv.Itoa(i), 2, 3)
 	}
 
