@@ -64,11 +64,7 @@ func main() {
 	tcpAddr, _ := net.ResolveTCPAddr("tcp", ":60026")
 	tcpListener, _ := net.ListenTCP("tcp", tcpAddr)
 
-	//var ConnMapData *ConnMap
 	ConnMapData := NewSafeMap()
-	// var rwmutex sync.RWMutex
-	// ConnMapData.rwmutex = rwmutex
-	// ConnMapData.Data = make(map[string]string)
 
 	ConnectTicker := time.NewTimer(time.Second * 10) // 十秒打印一次ConnMap长度
 
@@ -86,7 +82,7 @@ func main() {
 		tcpConn, err := tcpListener.AcceptTCP()
 		if err != nil {
 			log.Println("tcpConn error", err)
-			ConnMapData.Remove(tcpConn.RemoteAddr().String())
+			// ConnMapData.Remove(tcpConn.RemoteAddr().String())
 			continue
 		} else {
 
@@ -123,8 +119,6 @@ func HandleConn(tcpConn net.Conn, ConnMapData ConnMap) {
 				fmt.Println("完整匹配到数据", matchs)
 				newDatas := strings.Replace(socketDatas, matchs, "", 0)
 				ConnMapData.Put(remoteAddress, newDatas)
-				// ConnMapData.Data[remoteAddress] = newDatas
-
 			} else {
 				if len(socketDatas) > 10000 {
 				} else {

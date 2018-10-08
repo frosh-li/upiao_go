@@ -13,7 +13,8 @@ import (
 func dialToServer(snKey string, groups int, batterys int) {
 	conn, err := net.Dial("tcp", "127.0.0.1:60026")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("连接服务器出错", err)
+		return
 	}
 	defer conn.Close()
 	fmt.Println("dialToServer", snKey)
@@ -64,7 +65,8 @@ func dialToServer(snKey string, groups int, batterys int) {
 			n, err := conn.Read(b)
 			if err != nil {
 				fmt.Println(err.Error())
-				log.Fatal(err)
+				// log.Fatal(err)
+				continue
 			}
 			fmt.Println(string(b[:n]))
 			if string(b[:n]) == `<{"FuncSel":{"Operator":3}}>` {
@@ -79,7 +81,7 @@ func dialToServer(snKey string, groups int, batterys int) {
 
 func main() {
 	ch := make(chan string)
-	for i := 100000000; i <= 100000200; i++ {
+	for i := 100000000; i <= 100001000; i++ {
 		go dialToServer(strconv.Itoa(i), 2, 3)
 	}
 
